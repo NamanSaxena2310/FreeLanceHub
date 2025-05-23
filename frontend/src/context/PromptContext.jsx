@@ -1,4 +1,4 @@
-import { createContext,useState } from "react";
+import { createContext,useEffect,useState } from "react";
 
 const PromptContext = createContext()
 
@@ -10,6 +10,14 @@ const value = {
   setToken,
   backendUrl
 }
+
+
+useEffect(()=>{
+  const tokenFromLocalStorage = localStorage.getItem("token")
+  if (tokenFromLocalStorage) {
+    setToken(tokenFromLocalStorage)
+  }
+},[])
 
   return(
     <PromptContext.Provider value={value}>

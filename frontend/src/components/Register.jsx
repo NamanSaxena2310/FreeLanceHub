@@ -2,11 +2,16 @@ import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { PromptContext } from "../context/PromptContext";
 import axios from "axios"
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 const Register = () => {
   const [formType, setFormType] = useState("Register");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const {backendUrl,setToken} = useContext(PromptContext)
+
+  const navigate = useNavigate()
 
   const [password, setPassword] = useState("");
 
@@ -17,25 +22,33 @@ const Register = () => {
       const response = await axios.post(backendUrl + "/user/register",{name,email,password})
       if (response.data.success) {
       setToken(response.data.token)
+      localStorage.setItem("token",response.data.token)
       setEmail("")
       setName("")
       setPassword("")
+      navigate("/dashboard")
       }else{
         // Toast Message
+        toast.error(response.data.message)
+        
       }
      
     } else {
       const response = await axios.post(backendUrl + "/user/login",{email,password})
       if (response.data.success) {
       setToken(response.data.token)
+      localStorage.setItem("token",response.data.token)
       setEmail("")
       setPassword("")
+      navigate("/dashboard")
       }else{
         // Toast message
+        toast.error(response.data.message)
       }
     }
     } catch (error) {
-      
+      console.log(error)
+      toast.error(error.message)
     }
     
   }
