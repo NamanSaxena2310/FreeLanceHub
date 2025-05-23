@@ -1,10 +1,11 @@
 import React from 'react'
+import Register from '../components/Register'
 
 const Authentication = () => {
   return (
-    <div>
-      Hello fro Authentication
-    </div>
+    <>
+      <Register/>
+    </>
   )
 }
 
