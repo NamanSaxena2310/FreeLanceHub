@@ -42,6 +42,8 @@ const registerUser = async(req,res,next)=>{
      const newUser = new User({name,email,password:hashedPassword})
      const user=await newUser.save()
      const token = createToken(user._id)
+
+   
      res.json({
           success:true,
           token: token
