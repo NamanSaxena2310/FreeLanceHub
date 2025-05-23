@@ -1,24 +1,43 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
+import { PromptContext } from "../context/PromptContext";
+import axios from "axios"
 const Register = () => {
   const [formType, setFormType] = useState("Register");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const {backendUrl,setToken} = useContext(PromptContext)
 
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e)=>{
+  const handleSubmit = async(e)=>{
     e.preventDefault()
-    if (formType === "Register") {
-      console.log(name,email,password)
+    try {
+      if (formType === "Register") {
+      const response = await axios.post(backendUrl + "/user/register",{name,email,password})
+      if (response.data.success) {
+      setToken(response.data.token)
       setEmail("")
       setName("")
       setPassword("")
+      }else{
+        // Toast Message
+      }
+     
     } else {
-      console.log(email,password)
+      const response = await axios.post(backendUrl + "/user/login",{email,password})
+      if (response.data.success) {
+      setToken(response.data.token)
       setEmail("")
       setPassword("")
+      }else{
+        // Toast message
+      }
     }
+    } catch (error) {
+      
+    }
+    
   }
 
   return (
@@ -30,11 +49,11 @@ const Register = () => {
           <div>
             <input
               type="text"
-              value={userName}
+              value={name}
               className={`p-2 text-center border rounded-2xl ${
                 formType !== "Register" ? "hidden" : ""
               }`}
-              placeholder="Enter your Username"
+              placeholder="Enter your name"
               required = {formType === "Register" ? true : false}
               onChange={(e)=>setName(e.target.value)}
               
