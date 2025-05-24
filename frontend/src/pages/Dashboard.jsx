@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
-import { PromptContext } from '../context/PromptContext'
+import { AppContext } from '../context/AppContext'
 
 const Dashboard = () => {
-  const {token} = useContext(PromptContext)
+  const {token} = useContext(AppContext)
   console.log(token)
   return (
     <div>

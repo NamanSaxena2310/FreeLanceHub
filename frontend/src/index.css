@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
+*{
+  margin: 0;
+  box-sizing: border-boxs;
+}
+
 body {
 background: #F2F2F2;
-color:white;
+color:black;
 }

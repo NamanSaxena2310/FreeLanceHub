@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
-import { PromptContext } from "../context/PromptContext";
+import { AppContext } from "../context/AppContext";
 import axios from "axios"
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,7 @@ const Register = () => {
   const [formType, setFormType] = useState("Register");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const {backendUrl,setToken} = useContext(PromptContext)
+  const {backendUrl,setToken} = useContext(AppContext)
 
   const navigate = useNavigate()
 
@@ -55,7 +55,7 @@ const Register = () => {
 
   return (
     <div className=" flex justify-center items-center h-screen    ">
-      <form onSubmit={handleSubmit} className="h-[60%] w-[90%] md:w-[60%] lg:w-[30%] border rounded-4xl flex flex-col justify-center items-center gap-8 bg-[#1a1a1de0] shadow">
+      <form onSubmit={handleSubmit} className="h-[60%] w-[90%] md:w-[60%] lg:w-[30%]  rounded-4xl flex flex-col justify-center items-center gap-8  shadow-2xl">
         <h3 className=" text-2xl font-bold">{formType}</h3>
 
         <div className="flex flex-col justify-center items-center gap-4">

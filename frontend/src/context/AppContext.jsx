@@ -1,9 +1,9 @@
 import { createContext,useEffect,useState } from "react";
 
-const PromptContext = createContext()
+const AppContext = createContext()
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
-const PromptContextProvider = ({children})=>{
+const AppContextProvider = ({children})=>{
   const [token, setToken] = useState("")
 const value = {
   token,
@@ -20,12 +20,12 @@ useEffect(()=>{
 },[])
 
   return(
-    <PromptContext.Provider value={value}>
+    <AppContext.Provider value={value}>
       {children}
-    </PromptContext.Provider>
+    </AppContext.Provider>
   )
 }
 
 
-export {PromptContext}
-export default PromptContextProvider
+export {AppContext}
+export default AppContextProvider
