@@ -26,7 +26,7 @@ function App() {
           
           <div className="flex w-full ">
             <Sidebar />
-            <div className="w-[100%]    text-gray-600 text-base">
+            <div className="w-[100%]  p-10 border  text-gray-600 text-base">
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/client" element={<ClientManagement />} />
