@@ -20,27 +20,6 @@ const ClientSchema = new mongoose.Schema(
     notes: {
       type: String,
     },
-    projects: {
-      type: [
-        {
-          title: {
-            type: String,
-            required: true,
-          },
-          description: {
-            type: String,
-          },
-          status: {
-            type: String,
-            required: true,
-            enum: ["Not Started", "In Progress", "Completed", "Cancelled"],
-          },
-          deadline: {
-            type: Date,
-          },
-        },
-      ],
-    },
   },
   { timestamps: true }
 );
