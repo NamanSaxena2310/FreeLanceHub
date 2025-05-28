@@ -24,3 +24,6 @@ const ProjectSchema = new mongoose.Schema({
             type: Date,
           },
 })
+
+const Project = new mongoose.model('Project',ProjectSchema)
+module.exports = {Project}
