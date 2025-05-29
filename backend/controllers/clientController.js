@@ -5,7 +5,8 @@ const validator = require("validator");
 // Add a new Client
 const addClient = async (req, res, next) => {
   try {
-    const { name, company, email, phone, notes, userId } = req.body;
+    const { name, company, email, phone, notes } = req.body;
+    const userId = req.userId;
 
     if (!name.trim() || !email.trim() || !phone.trim()) {
       return res.json({
@@ -20,7 +21,16 @@ const addClient = async (req, res, next) => {
         message: "Please Enter a valid Email ",
       });
     }
-    const clientExist = await Client.findOne({ name, company, phone, userId });
+
+       if (!validator.isMobilePhone(phone)) {
+       return res.json({
+        success:false,
+        message:"Please Enter a Valid Phone Number"
+      })
+    }
+
+
+    const clientExist = await Client.findOne({ email });
     if (clientExist) {
       return res.json({
         success: false,
@@ -54,7 +64,10 @@ const addClient = async (req, res, next) => {
 // Get All Clients Details
 const getClients = async (req, res, next) => {
   try {
-    const { userId } = req.body;
+    
+    const userId = req.userId;
+
+    
     const clientDetails = await Client.find({ userId });
 
     if (clientDetails.length === 0) {
@@ -80,10 +93,28 @@ const getClients = async (req, res, next) => {
 // Edit Client Details
 const updateClient = async (req, res, next) => {
   try {
-    const { name, company, phone, email, notes, userId } = req.body;
-    const { clientId } = req.headers;
+    const { name, company, phone, email, notes } = req.body;
+    const userId = req.userId;
+
+    const clientId  = req.headers['clientid'];
+
+    console.log(clientId,userId)
+    if (!validator.isEmail(email)) {
+      return res.json({
+        success:false,
+        message:"Please Enter a Valid Email"
+      })
+    }
+
+    if (!validator.isMobilePhone(phone)) {
+       return res.json({
+        success:false,
+        message:"Please Enter a Valid Phone Number"
+      })
+    }
+
     const updatedClient = await Client.findOneAndUpdate(
-      { _id: clientId, userId: userId },
+      { _id: clientId, userId: (userId) },
       { name, company, phone, email, notes },
       { new: true }
     );
@@ -104,13 +135,16 @@ const updateClient = async (req, res, next) => {
 
 const deleteClient = async (req, res, next) => {
   try {
-    const { userId } = req.body;
-    const { clientId } = req.headers;
+    const userId = req.userId;
+    
+    const clientId = req.headers['clientid'];
+
     const clientDeleted = await Client.findOneAndDelete({
       _id: clientId,
       userId: userId,
     });
 
+    
     if (!clientDeleted) {
       return res.json({
         success: false,
@@ -135,8 +169,9 @@ const deleteClient = async (req, res, next) => {
 
 const getDetailsOfSingleClient = async (req, res, next) => {
   try {
-    const { userId } = req.body;
-    const { clientId } = req.headers;
+    const userId = req.userId;
+    
+    const clientId  = req.headers['clientid'];
     const details = await Client.findOne({ _id: clientId, userId: userId });
 
     if (!details) {

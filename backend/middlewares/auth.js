@@ -1,27 +1,25 @@
-const jwt = require("jsonwebtoken")
-const authorizeUser = async(req,res,next)=>{
+const jwt = require("jsonwebtoken");
 
+const authorizeUser = async (req, res, next) => {
   try {
-    const {token} = req.headers
-
+    const token = req.headers["token"];
     if (!token) {
-      return res.json({
-        success:false,
-        message:"Not Authorizedd Login Again"
-      })
+      return res.status(401).json({
+        success: false,
+        message: "Not Authorized. Login Again",
+      });
     }
 
-    const token_decoded = jwt.verify(token,process.env.JWT_PRIVATE_KEY)
-    req.body.userId = token_decoded._id
-    next()
+    const token_decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+    req.userId = token_decoded.id; // ✅ Clean approach
+    next();
   } catch (error) {
-    console.log(error)
-    res.json({
-      success:false,
-      message:error.message
-    })
+    console.log(error);
+    res.status(401).json({
+      success: false,
+      message: error.message,
+    });
   }
-    
-}
+};
 
-module.exports = {authorizeUser}
+module.exports = { authorizeUser };
