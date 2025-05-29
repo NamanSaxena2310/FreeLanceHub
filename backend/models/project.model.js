@@ -1,13 +1,7 @@
 const mongoose = require("mongoose")
 
 const ProjectSchema = new mongoose.Schema({
-          client:
-            {
-              type:mongoose.Schema.Types.ObjectId,
-              ref: "Client",
-              required:true
-            }
-          ,
+          
           title: {
             type: String,
             required: true,
@@ -23,6 +17,13 @@ const ProjectSchema = new mongoose.Schema({
           deadline: {
             type: Date,
           },
+          client:
+            {
+              type:mongoose.Schema.Types.ObjectId,
+              ref: "Client",
+              required:true
+            }
+          
 })
 
 const Project = new mongoose.model('Project',ProjectSchema)

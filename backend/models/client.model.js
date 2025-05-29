@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const ClientSchema = new mongoose.Schema(
   {
+   
     name: {
       type: String,
       required: true,
@@ -20,6 +21,10 @@ const ClientSchema = new mongoose.Schema(
     notes: {
       type: String,
     },
+     userId:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"User"
+    }
   },
   { timestamps: true }
 );

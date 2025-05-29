@@ -1,64 +1,167 @@
-const { Client } = require("../models/client.model")
-const { User } = require("../models/user.model")
-const validator = require('validator')
+const { Client } = require("../models/client.model");
+const { User } = require("../models/user.model");
+const validator = require("validator");
 
-
-const addClient = async (req,res,next) =>{
+// Add a new Client
+const addClient = async (req, res, next) => {
   try {
-    const {name,company,email,phone,notes} = req.body
- 
-  if (!name.trim() || !email.trim() || !phone.trim()) {
+    const { name, company, email, phone, notes, userId } = req.body;
+
+    if (!name.trim() || !email.trim() || !phone.trim()) {
       return res.json({
-        success:false,
-        message:"name email or phone fields cannot be empty "
-      })
-  }
+        success: false,
+        message: "name email or phone fields cannot be empty ",
+      });
+    }
 
-  if (!validator.isEmail(email)) {
-    return res.json({
-        success:false,
-        message:"Please Enter a valid Email "
-      })
-  }
-const clientExist = await Client.findOne({name,company,phone})
-  if (clientExist) {
-    return res.json({
-      success:false,
-      message:"Client Already Exists"
-    })
-  }
+    if (!validator.isEmail(email)) {
+      return res.json({
+        success: false,
+        message: "Please Enter a valid Email ",
+      });
+    }
+    const clientExist = await Client.findOne({ name, company, phone, userId });
+    if (clientExist) {
+      return res.json({
+        success: false,
+        message: "Client Already Exists",
+      });
+    }
 
-  const newClient = new Client({name,company,email,phone,notes})
-  await newClient.save()
+    const newClient = new Client({
+      name,
+      company,
+      email,
+      phone,
+      notes,
+      userId,
+    });
+    await newClient.save();
 
-  res.json({
-    success:true,
-    message:"Client Added"
-  })
-  } catch (error) {
-    console.log(error)
     res.json({
-      success:false,
-      message:error.message
-    })
+      success: true,
+      message: "Client Added",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
   }
- 
+};
 
+// Get All Clients Details
+const getClients = async (req, res, next) => {
+  try {
+    const { userId } = req.body;
+    const clientDetails = await Client.find({ userId });
 
-}
+    if (clientDetails.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No clients found",
+      });
+    }
 
+    res.json({
+      success: true,
+      data: clientDetails,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
-const getClient = (req,res,next) =>{
-    
-}
+// Edit Client Details
+const updateClient = async (req, res, next) => {
+  try {
+    const { name, company, phone, email, notes, userId } = req.body;
+    const { clientId } = req.headers;
+    const updatedClient = await Client.findOneAndUpdate(
+      { _id: clientId, userId: userId },
+      { name, company, phone, email, notes },
+      { new: true }
+    );
 
-const updateClient = (req,res,next)=>{
+    res.json({
+      success: true,
+      data: updatedClient,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
-}
+// Delete a client
 
+const deleteClient = async (req, res, next) => {
+  try {
+    const { userId } = req.body;
+    const { clientId } = req.headers;
+    const clientDeleted = await Client.findOneAndDelete({
+      _id: clientId,
+      userId: userId,
+    });
+
+    if (!clientDeleted) {
+      return res.json({
+        success: false,
+        message: "Client not found or unauthorized",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Client Deleted Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Get Details of single client
+
+const getDetailsOfSingleClient = async (req, res, next) => {
+  try {
+    const { userId } = req.body;
+    const { clientId } = req.headers;
+    const details = await Client.findOne({ _id: clientId, userId: userId });
+
+    if (!details) {
+      return res.json({
+        success: false,
+        message: "Client Does Not Exists",
+      });
+    }
+    res.json({
+      success: true,
+      data: details,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 module.exports = {
   addClient,
-  getClient,
-  updateClient
-}
+  getClients,
+  updateClient,
+  deleteClient,
+  getDetailsOfSingleClient,
+};
