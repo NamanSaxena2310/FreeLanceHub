@@ -244,10 +244,38 @@ const getDetailsOfSingleProject = async (req, res, next) => {
   }
 };
 
+const getAllProjectsForUser = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+
+    
+    const userClients = await Client.find({ userId }).select("_id");
+    
+    const clientIds = userClients.map((client)=>client._id)
+
+    const allProjects = await Project.find({ clientId: { $in: clientIds } });
+
+    
+
+    res.json({
+      success: true,
+      data: allProjects
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   getAllProjects,
   createProject,
   updateProject,
   deleteProject,
   getDetailsOfSingleProject,
+  getAllProjectsForUser
 };
