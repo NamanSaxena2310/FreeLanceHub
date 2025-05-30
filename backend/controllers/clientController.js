@@ -1,5 +1,4 @@
 const { Client } = require("../models/client.model");
-const { User } = require("../models/user.model");
 const validator = require("validator");
 
 // Add a new Client

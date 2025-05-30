@@ -16,8 +16,9 @@ const ProjectSchema = new mongoose.Schema({
           },
           deadline: {
             type: Date,
+            required : true
           },
-          client:
+          clientId:
             {
               type:mongoose.Schema.Types.ObjectId,
               ref: "Client",

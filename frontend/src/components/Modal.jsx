@@ -6,7 +6,7 @@ const Modal = ({ onClose }) => {
 
  
   return (
-    <div className="fixed inset-0 backdrop-blur-xs  flex items-center justify-center z-50">
+    <div onClick={onClose} className="fixed inset-0 backdrop-blur-xs  flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <h2 className="text-lg font-bold mb-4">Add Client</h2>
 
