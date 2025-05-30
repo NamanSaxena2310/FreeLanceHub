@@ -211,11 +211,50 @@ const deleteProject = async(req,res,next) =>{
 
 }
 
+const getDetailsOfSingleProject = async(req,res,next) =>{
+  try {
+    const projectId = req.headers['projectid']
+  const userId = req.userId
+
+  const project = await Project.findOne({ _id: projectId }).populate('clientId');
+
+    if (!project) {
+      return res.json({
+        success: false,
+        message: "Project not found!"
+      });
+    }
+
+
+    if (userId.toString() !== project.clientId.userId.toString()) {
+      return res.json({
+        success: false,
+        message: "Not Authorized"
+      });
+    }
+
+
+
+    res.json({
+      success:true,
+      data:project
+    })
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+  
+}
+
 
 
 module.exports = {
   getAllProjects,
   createProject,
   updateProject,
-  deleteProject
+  deleteProject,
+  getDetailsOfSingleProject
 }
