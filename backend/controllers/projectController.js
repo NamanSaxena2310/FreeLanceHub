@@ -1,41 +1,36 @@
-
-
-import { Client } from "../models/client.model";
-import { Project } from "../models/project.model";
-
+const { Client } = require("../models/client.model");
+const { Project } = require("../models/project.model");
 
 // Get All projects for a client
-const getAllProjects = async(req,res,next)=>{
-  
+const getAllProjects = async (req, res, next) => {
   try {
-    const clientId = req.headers['clientid']
-    const userId = req.userId
-  if (!clientId) {
-    return res.json({
-      success:false,
-      message:"Invalid Client Id"
-    })
-  }
+    const clientId = req.headers["clientid"];
+    const userId = req.userId;
+    if (!clientId) {
+      return res.json({
+        success: false,
+        message: "Invalid Client Id",
+      });
+    }
 
-  const client = await Client.findOne({ _id:clientId,userId})
-  if (!client) {
-    return res.json({ success: false, message: "Unauthorized" });
-  }
+    const client = await Client.findOne({ _id: clientId, userId });
+    if (!client) {
+      return res.json({ success: false, message: "Unauthorized" });
+    }
 
-  const allProjects = await Project.find({clientId}).populate('clientId')
+    const allProjects = await Project.find({ clientId }).populate("clientId");
 
-  if (allProjects.length === 0) {
-     return res.json({
-      success:false,
-      message:"No Projects found for this client"
-    })
-  }
+    if (allProjects.length === 0) {
+      return res.json({
+        success: false,
+        message: "No Projects found for this client",
+      });
+    }
 
-  res.json({
-    success:true,
-    data:allProjects
-  })
-
+    res.json({
+      success: true,
+      data: allProjects,
+    });
   } catch (error) {
     console.log(error);
     res.json({
@@ -43,13 +38,12 @@ const getAllProjects = async(req,res,next)=>{
       message: error.message,
     });
   }
- 
-}
+};
 
 // Create a new Project
 const createProject = async (req, res, next) => {
   try {
-    const clientId = req.headers['clientid'];
+    const clientId = req.headers["clientid"];
     const { title, description, status, deadline } = req.body;
     const userId = req.userId;
 
@@ -61,16 +55,20 @@ const createProject = async (req, res, next) => {
     if (!title?.trim() || !status?.trim() || !deadline) {
       return res.json({
         success: false,
-        message: "Title, status and deadline are required."
+        message: "Title, status and deadline are required.",
       });
     }
 
-    
-    const validStatuses = ["Not Started", "In Progress", "Completed", "Cancelled"];
+    const validStatuses = [
+      "Not Started",
+      "In Progress",
+      "Completed",
+      "Cancelled",
+    ];
     if (!validStatuses.includes(status)) {
       return res.json({
         success: false,
-        message: "Invalid status value"
+        message: "Invalid status value",
       });
     }
 
@@ -79,7 +77,7 @@ const createProject = async (req, res, next) => {
       description: description?.trim() || "",
       status,
       deadline: new Date(deadline),
-      clientId
+      clientId,
     });
 
     await newProject.save();
@@ -87,52 +85,54 @@ const createProject = async (req, res, next) => {
     res.json({
       success: true,
       message: "Project Created",
-      data: newProject
+      data: newProject,
     });
-
   } catch (error) {
     console.log(error);
     res.json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
-
 
 // Update Project
 
 const updateProject = async (req, res, next) => {
   try {
-    const projectId = req.headers['projectid']; 
+    const projectId = req.headers["projectid"];
     const userId = req.userId;
     const { title, description, status, deadline } = req.body;
 
-    
-    const project = await Project.findOne({ _id: projectId }).populate('clientId');
+    const project = await Project.findOne({ _id: projectId }).populate(
+      "clientId"
+    );
 
     if (!project) {
       return res.json({
         success: false,
-        message: "Project not found!"
+        message: "Project not found!",
       });
     }
 
-    
     if (userId.toString() !== project.clientId.userId.toString()) {
       return res.json({
         success: false,
-        message: "Not Authorized"
+        message: "Not Authorized",
       });
     }
 
-    
     const updateData = {};
     if (title?.trim()) updateData.title = title.trim();
     if (description?.trim()) updateData.description = description.trim();
 
     if (status?.trim()) {
-      const validStatuses = ["Not Started", "In Progress", "Completed", "Cancelled"];
+      const validStatuses = [
+        "Not Started",
+        "In Progress",
+        "Completed",
+        "Cancelled",
+      ];
       if (!validStatuses.includes(status.trim())) {
         return res.json({ success: false, message: "Invalid status value" });
       }
@@ -144,11 +144,10 @@ const updateProject = async (req, res, next) => {
     if (Object.keys(updateData).length === 0) {
       return res.json({
         success: false,
-        message: "No valid fields to update"
+        message: "No valid fields to update",
       });
     }
 
-    
     const updatedProject = await Project.findOneAndUpdate(
       { _id: projectId },
       updateData,
@@ -158,9 +157,8 @@ const updateProject = async (req, res, next) => {
     res.json({
       success: true,
       message: "Project updated successfully",
-      data: updatedProject
+      data: updatedProject,
     });
-
   } catch (error) {
     console.log(error);
     res.json({
@@ -171,35 +169,36 @@ const updateProject = async (req, res, next) => {
 };
 
 // Delete project
-const deleteProject = async(req,res,next) =>{
+const deleteProject = async (req, res, next) => {
   try {
-  const projectId = req.headers['projectid']
-  const userId = req.userId
-  
-  const project = await Project.findOne({ _id: projectId }).populate('clientId');
+    const projectId = req.headers["projectid"];
+    const userId = req.userId;
+
+    const project = await Project.findOne({ _id: projectId }).populate(
+      "clientId"
+    );
 
     if (!project) {
       return res.json({
         success: false,
-        message: "Project not found!"
+        message: "Project not found!",
       });
     }
-
 
     if (userId.toString() !== project.clientId.userId.toString()) {
       return res.json({
         success: false,
-        message: "Not Authorized"
+        message: "Not Authorized",
       });
     }
 
-    const deletedProject = await Project.findByIdAndDelete(projectId)
+    const deletedProject = await Project.findByIdAndDelete(projectId);
 
     res.json({
-      success:true,
-      message:"Project Deleted",
-      data:deletedProject
-    })
+      success: true,
+      message: "Project Deleted",
+      data: deletedProject,
+    });
   } catch (error) {
     console.log(error);
     res.json({
@@ -207,38 +206,35 @@ const deleteProject = async(req,res,next) =>{
       message: error.message,
     });
   }
-  
+};
 
-}
-
-const getDetailsOfSingleProject = async(req,res,next) =>{
+const getDetailsOfSingleProject = async (req, res, next) => {
   try {
-    const projectId = req.headers['projectid']
-  const userId = req.userId
+    const projectId = req.headers["projectid"];
+    const userId = req.userId;
 
-  const project = await Project.findOne({ _id: projectId }).populate('clientId');
+    const project = await Project.findOne({ _id: projectId }).populate(
+      "clientId"
+    );
 
     if (!project) {
       return res.json({
         success: false,
-        message: "Project not found!"
+        message: "Project not found!",
       });
     }
-
 
     if (userId.toString() !== project.clientId.userId.toString()) {
       return res.json({
         success: false,
-        message: "Not Authorized"
+        message: "Not Authorized",
       });
     }
 
-
-
     res.json({
-      success:true,
-      data:project
-    })
+      success: true,
+      data: project,
+    });
   } catch (error) {
     console.log(error);
     res.json({
@@ -246,15 +242,12 @@ const getDetailsOfSingleProject = async(req,res,next) =>{
       message: error.message,
     });
   }
-  
-}
-
-
+};
 
 module.exports = {
   getAllProjects,
   createProject,
   updateProject,
   deleteProject,
-  getDetailsOfSingleProject
-}
+  getDetailsOfSingleProject,
+};
